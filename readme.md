@@ -1,7 +1,5 @@
 # x-storage-indexeddb
 
-> A [Brick](https://github.com/mozilla/brick/) custom element starter-kit.
-
 ## Demo
 
 [Check it live!](http://dotch.github.io/x-storage-indexeddb)
@@ -35,6 +33,7 @@ Attribute     | Options     | Default      | Description
 
 ## Methods
 
+ //TODO
 Method        | Parameters   | Returns     | Description
 ---           | ---          | ---         | ---
 `save()`      | None.        | Nothing.    | Save an object.

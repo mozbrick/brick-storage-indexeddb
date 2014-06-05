@@ -22,19 +22,19 @@
         resolve(req.result);
       };
       req.onerror = function (e) {
-        reject(req.errorCode);
+        reject(req.error);
       };
     });
   }
 
-
-  function IndexedDbStore(storeName, indices) {
+  function IndexedDbStore(storeName, key, indices) {
 
     var self = this;
     self._ready = false;
     self.storeName = storeName;
     self.indices = indices;
-    
+    self.key = key;
+
     self.ready = new Promise(function (resolve, reject) {
       if (!indexedDB) {
         reject('No indexedDB implementation found!');
@@ -47,6 +47,14 @@
       req.onupgradeneeded = function (e) {
         self.db = req.result;
         var store = self.db.createObjectStore(self.storeName, {autoIncrement: true});
+        // create indices 
+        for (var i = 0; i < self.indices.length; i++) {
+          store.createIndex(self.indices[i], self.indices[i]);
+        }
+        // if provided create a unique index with the key
+        if (key) {
+          store.createIndex(self.key, self.key, {unique: true});
+        }
         resolve(self);
       };
       req.onerror = reject;
@@ -55,7 +63,6 @@
     self.ready.then(function() {
       self._ready = true;
     });
-
   }
 
   IndexedDbStore.prototype = {
@@ -82,92 +89,186 @@
       }
     },
 
+    // Internal get the id for a given key
+    _getIdForKey: function (key) {
+      var self = this;
+      var store = self._getObjectStore();
+      var index = store.index(self.key);
+      return wrap(index.getKey(key));
+    },
+
+    // Internal to put object into the db
+    _put: function (object, key) {
+      var self = this;
+      var store = self._getObjectStore('readwrite');
+      return wrap(store.put(object, key));
+    },
+
+    /**
+     * Save an object into the database
+     * @param  {object}        object the object to be saved
+     * @return {string|number} the id/key to which it was saved
+     */
     save: function (object) {
       var self = this;
       return self._awaitReady(self._save, arguments);
     },
     _save: function (object) {
       var self = this;
-      var store = self._getObjectStore('readwrite');
-      return wrap(store.put(object));  
+      if (self.key) {
+        return self._put(object)
+          .then(function (id){
+            // return key instead of id
+            return object[self.key];
+          });
+      } else {
+        return self._put(object);
+      }
     },
 
 
     /**
-     * Update or insert an Object at the given id.
+     * Update or insert an Object at the given id/key.
      * @param {number} id
      * @param {string|number|object} object
-     * @return {promise} for the id of the created object
+     * @return {promise} for the id/key of the created object
      */
-    set: function (id, object) {
+    set: function (key, object) {
       var self = this;
       return self._awaitReady(self._set, arguments);
     },
-    _set: function (id, object) {
+    _set: function (key, object) {
       var self = this;
-      var store = self._getObjectStore('readwrite');
-      return wrap(store.put(object, id));       
+      if (self.key) {
+        // indexeddb will throw a constraint error for the 
+        // duplicate key instead of updating the object
+        // so we check if the item exists
+        return self._getIdForKey(key)
+          .then(function(id){
+            return self._put(object, id);
+          })
+          .then(function(id){
+            // resolve with the key after the item has been saved
+            return key;
+          });
+      } else {
+        // if the key is an id we can just insert it.
+        return self._put(object, key);
+      }
     },
 
+    /**
+     * Update an Object at the given id.
+     * @param {number|string}        id
+     * @param {string|number|object} object
+     * @return {promise} for the id of the created object
+     */
+    update: function (key, object) {
+      var self = this;
+      return self._awaitReady(self._update, arguments);
+    },
+    _update: function (key, object) {
+      var self = this;
+      var updateError = new Error("Update not possible. No item with the given key exists.");
+      if (self.key) {
+        // indexeddb will throw a constraint error for the 
+        // duplicate key instead of updating the object
+        // so we check if the item exists
+        return self._getIdForKey(key)
+          .then(function(id){
+            // save the new item if an item at the given id exists
+            // else throw an error because there is no item to update
+            if (id) {
+              return self._put(object, id);
+            } else {
+              return Promise.reject(updateError);
+            }
+          })
+          // resolve with key instead of id
+          .then(function(id){
+            return key;
+          });
+      } else {
+        // if the key is an id we can just insert it.
+        self._get(key).then(function(item){
+          if (item) {
+            return self._put(object, key);
+          } else {
+            return Promise.reject(updateError);
+          }
+        });
+      }
+    },
 
     /**
-     * Get the object saved at a given id.
-     * @param  {number} id
-     * @return {promise} for the object
+     * Get the object saved at a given id/key.
+     * @param  {number|string} id
+     * @return {promise}       for the object
      */
-    get: function (id) {
+    get: function (key) {
       var self = this;
       return self._awaitReady(self._get, arguments);
     },
-    _get: function (id) {
+    _get: function (key) {
       var self = this;
       var store = self._getObjectStore();
-      return wrap(store.get(id));
+      if (self.key) {
+        var index = store.index(self.key);
+        return wrap(index.get(key));
+      } else {
+        return wrap(store.get(key));
+      }
     },
 
-
     /**
-     * Removes the the entry with the supplied id from the database.
-     * @param  {number} id
+     * Removes the the entry with the supplied id/key from the database.
+     * @param  {number|string} id
      * @return {promise} for undefined
      */
-    remove: function (id) {
+    remove: function (key) {
       var self = this;
       return self._awaitReady(self._remove, arguments);
     },
-    _remove: function (id) {
+    _remove: function (key) {
       var self = this;
-      var store = self._getObjectStore('readwrite');
-      return wrap(store.delete(id));
+      if (self.key) {
+        // need to get the primary key to delete something
+        return self._getIdForKey(key).then(function(id){
+          var store = self._getObjectStore('readwrite');
+          return wrap(store.delete(id));
+        });
+      } else {
+        var store = self._getObjectStore('readwrite');
+        return wrap(store.delete(key));
+      }
     },
 
     /**
      * Returns all databse entries.
-     * @param  {string}  [orderBy='key'] The index to order the results by.
-     *                                   Can be 'key', 'value' or 'insertionTime'.
-     * @param  {boolean} [reverse=false] Reverse the order of the results.
-     * @return {promise}
+     * @param  {options} 
+     *   {string}  orderby    The key by which the results will be ordered.
+     *   {boolean} reverse    Reverse the order of the results.
+     * @return {promise} for the objects
      */
     getAll: function(options) {
       var self = this;
       return self._awaitReady(self._getMany, arguments);
     },
-
     _getAll: function(options) {
       var self = this;
-      return new Promise(function (resolve,reject) {
-        // Get all entries by calling _getRange
-        resolve(self._getMany(options));
-      });
+      // Get all entries by calling _getRange
+      return self._getMany(options);
     },
 
     /**
      * Returns multiple database entries.
      * @param  {options} 
-     *   {any}    start            The first id of the results.
-     *   {any}    end              The last id of the results.
-     *   {number} count            The number of results
-     *   {number} offset           The offset of the first result
+     *   {any}     stt        The first id of the results.
+     *   {any}     end        The last id of the results.
+     *   {number}  count      The number of results.
+     *   {number}  offset     The offset of the first result.
+     *   {string}  orderby    The key by which the results will be ordered.
+     *   {boolean} reverse    Reverse the order of the results.
      *   use [start] with ([end] or/and [count])
      *   use [offset] with ([end] or/and [count])
      *   using [end] together with [count] the results stop at whatever comes first.
@@ -178,15 +279,18 @@
       return self._awaitReady(self._getMany, arguments);
     },
     _getMany: function(options) {
+      // TODO: consider using openKeyCursor in _getMany
       options = options || {};
       var self = this;
       var store = self._getObjectStore();
       var counter = 0;
-      var index = 0;
+      var position = 0;
       var start = options.start;
       var end = options.end;
       var count = options.count || undefined;
       var offset = options.offset || undefined;
+      var direction = options.reverse ? 'prev' : 'next';
+      var orderby = options.orderby;
       // set bound based on options
       var bound;
       if (start && end) {
@@ -200,8 +304,14 @@
       }
       var allItems = [];
       return new Promise(function(resolve,reject){
-        //open cursor with the bound
-        var cursorRequest = store.openCursor(bound);
+        var cursorRequest;
+        if (orderby || self.key) {
+          var ordering = orderby || self.key;
+          var index = store.index(ordering);
+          cursorRequest = index.openCursor(bound, direction);
+        } else {
+          cursorRequest = store.openCursor(bound, direction);
+        }
         cursorRequest.onsuccess = function(e){
           var cursor = e.target.result;
           // if we reached the end of the items or as many items as
@@ -213,11 +323,11 @@
           } else {
             // if we ware above the offset or no offset is specified,
             // add the item to teh results
-            if (!offset || index >= offset) {
+            if (!offset || position >= offset) {
               allItems.push(cursor.value);
               counter++;
             }
-            index++;
+            position++;
             cursor.continue();
           }
         };
@@ -232,7 +342,6 @@
       var self = this;
       return self._awaitReady(self._size);
     },
-
     _size: function() {
       var self = this;
       var store = self._getObjectStore();
@@ -247,13 +356,11 @@
       var self = this;
       return self._awaitReady(self._clear);
     },
-
     _clear: function() {
       var self = this;
       var store = self._getObjectStore('readwrite');
       return wrap(store.clear());
     }
-        
   };
 
 
@@ -261,30 +368,25 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
 
   StoragePrototype.createdCallback = function () {
     this.name = this.getAttribute('name') || 'storage';
+    this.key = this.getAttribute('key');
     this.indices = this.getAttribute('index').split(" ");
-    this.storage = new IndexedDbStore(this.name, this.indices);
-  };
-  StoragePrototype.attachedCallback = function () {
-  };
-  StoragePrototype.detatchedCallback = function () {
-  };
-  StoragePrototype.attributeChangedCallback = function (attr, oldVal, newVal) {
+    this.storage = new IndexedDbStore(this.name, this.key, this.indices);
   };
 
   StoragePrototype.save = function (object) {
     return this.storage.save(object);
   };
-  StoragePrototype.set = function (id, object) {
-    return this.storage.set(id, object);
+  StoragePrototype.set = function (key, object) {
+    return this.storage.set(key, object);
   };
-  StoragePrototype.update = function (id, object) {
-    return this.storage.set(id, object);
+  StoragePrototype.update = function (key, object) {
+    return this.storage.update(key, object);
   };
-  StoragePrototype.get = function (id) {
-    return this.storage.get(id);
+  StoragePrototype.get = function (key) {
+    return this.storage.get(key);
   };
-  StoragePrototype.remove = function (id) {
-    return this.storage.remove(id);
+  StoragePrototype.remove = function (key) {
+    return this.storage.remove(key);
   };
   StoragePrototype.getAll = function (options) {
     return this.storage.getAll(options);

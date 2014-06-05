@@ -1,12 +1,12 @@
 {
-  "name": "brick-boilerplate",
+  "name": "x-storage-indexeddb",
   "version": "0.0.0",
-  "homepage": "https://github.com/mozilla/brick-boilerplate",
+  "homepage": "https://github.com/dotch/x-storage-indexeddb",
   "authors": [
     "Matt Claypotch <thepotch@gmail.com>",
     "Christian Weiss <christian.x.weiss@gmail.com>"
   ],
-  "description": "Empty Brick Component Project",
+  "description": "Web component indexdb storage",
   "main": "src/element.html",
   "keywords": [
     "brick",
@@ -26,6 +26,6 @@
   },
   "devDependencies": {
     "mocha": "~1.20.0",
-    "chai": "~1.9.1"
+    "chai": "~1.9.1",
   }
 }
