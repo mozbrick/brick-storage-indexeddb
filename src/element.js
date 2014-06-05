@@ -22,6 +22,9 @@
         resolve(req.result);
       };
       req.onerror = function (e) {
+        // prevent the transaction from being aborted 
+        // on a constraint error
+        e.preventDefault();
         reject(req.error);
       };
     });
