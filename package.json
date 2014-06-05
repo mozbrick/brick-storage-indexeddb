@@ -1,14 +1,14 @@
 {
-  "name": "brick-boilerplate",
+  "name": "x-storage-indexeddb",
   "version": "0.0.1",
-  "description": "Empty Brick Web Component Boilerplate",
+  "description": "Web component indexdb storage",
   "main": "element.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mozilla/brick-boilerplate.git"
+    "url": "git://github.com/dotch/x-storage-indexeddb.git"
   },
   "keywords": [
     "brick",
@@ -18,9 +18,9 @@
   "author": "mozilla",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mozilla/brick-boilerplate/issues"
+    "url": "https://github.com/dotch/x-storage-indexeddb/issues"
   },
-  "homepage": "https://github.com/mozilla/brick-boilerplate",
+  "homepage": "https://github.com/dotch/x-storage-indexeddb",
   "devDependencies": {
     "gulp": "^3.6.2",
     "gulp-bump": "^0.1.8",
