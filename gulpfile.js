@@ -2,7 +2,6 @@
 var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     connect = require('gulp-connect'),
-    stylus = require('gulp-stylus'),
     ghpages = require('gulp-gh-pages'),
     bump = require('gulp-bump'),
     concat = require('gulp-concat');
@@ -10,9 +9,9 @@ var gulp = require('gulp'),
 var paths = {
   'main': 'src/element.html',
   'scripts': 'src/*.js',
-  'stylesheets': 'src/*.styl',
   'src': 'src/*',
   'index': 'index.html',
+  'test': 'test/*',
   'bowerComponents': 'bower_components/**/*'
 };
 
@@ -23,34 +22,19 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-
-gulp.task('styles', function() {
-  gulp.src(paths.stylesheets)
-    .pipe(stylus())
-    .pipe(concat('element.css'))
-    .pipe(gulp.dest('src'));
-});
-
-
-// build scripts and styles
-gulp.task('build', ['lint','styles']);
-
-
 gulp.task('connect', function() {
   connect.server({
     port: 3001
   });
 });
 
-
 gulp.task('watch', function () {
   gulp.watch(paths.scripts, ['lint']);
-  gulp.watch(paths.stylesheets, ['styles']);
 });
 
 
 // do a build, start a server, watch for changes
-gulp.task('server', ['build','connect','watch']);
+gulp.task('server', ['lint','connect','watch']);
 
 
 // Bum up the Version (patch)
@@ -67,7 +51,8 @@ gulp.task('deploy', function () {
   gulp.src([
     paths.index,
     paths.src,
-    paths.bowerComponents
+    paths.test,
+    paths.bowerComponents,
   ],{base:'./'})
     .pipe(ghpages());
 });
