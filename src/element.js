@@ -106,8 +106,9 @@
 
     /**
      * Save an object into the database
-     * @param  {object}        object the object to be saved
-     * @return {string|number} the id/key to which it was saved
+     * @param  {object}    object   the object to be saved
+     * @return {promise}   Promise for the id/key to which 
+     *                     it was saved
      */
     save: function (object) {
       var self = this;
@@ -126,12 +127,12 @@
       }
     },
 
-
     /**
      * Update or insert an Object at the given id/key.
-     * @param {number} id
+     * @param {number}               id
      * @param {string|number|object} object
-     * @return {promise} for the id/key of the created object
+     * @return {promise}             Promise for the id/key of 
+     *                               the created object
      */
     set: function (key, object) {
       var self = this;
@@ -142,7 +143,7 @@
       if (self.key) {
         // indexeddb will throw a constraint error for the 
         // duplicate key instead of updating the object
-        // so we check if the item exists
+        // so we first check if the item exists
         return self._getIdForKey(key)
           .then(function(id){
             return self._put(object, id);
@@ -152,7 +153,7 @@
             return key;
           });
       } else {
-        // if the key is an id we can just insert it.
+        // if the key is an id we can just insert.
         return self._put(object, key);
       }
     },
@@ -161,7 +162,8 @@
      * Update an Object at the given id.
      * @param {number|string}        id
      * @param {string|number|object} object
-     * @return {promise} for the id of the created object
+     * @return {promise}             Promise for the id of the 
+     *                               created object
      */
     update: function (key, object) {
       var self = this;
@@ -203,7 +205,7 @@
     /**
      * Get the object saved at a given id/key.
      * @param  {number|string} id
-     * @return {promise}       for the object
+     * @return {promise}       Promise for the object
      */
     get: function (key) {
       var self = this;
@@ -248,7 +250,7 @@
      * @param  {options} 
      *   {string}  orderby    The key by which the results will be ordered.
      *   {boolean} reverse    Reverse the order of the results.
-     * @return {promise} for the objects
+     * @return {promise}      Promise for the objects
      */
     getAll: function(options) {
       var self = this;
@@ -272,7 +274,7 @@
      *   use [start] with ([end] or/and [count])
      *   use [offset] with ([end] or/and [count])
      *   using [end] together with [count] the results stop at whatever comes first.
-     * @return {promise} for the objects
+     * @return {promise}      Promise for the objects
      */
     getMany: function(options) {
       var self = this;
@@ -336,7 +338,7 @@
 
     /**
      * Returns the number of database entries.
-     * @return {promise} for the size 
+     * @return {promise} Promise for the size.
      */
     size: function() {
       var self = this;
@@ -350,7 +352,7 @@
 
     /**
      * Deletes all database entries.
-     * @return {promise}
+     * @return {promise} Promise for undefined.
      */
     clear: function () {
       var self = this;
