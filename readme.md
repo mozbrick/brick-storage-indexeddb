@@ -33,12 +33,10 @@ Attribute     | Options     | Default      | Description
 
 ## Methods
 
- //TODO
 Method        | Parameters   | Returns     | Description
 ---           | ---          | ---         | ---
 `save()`      | None.        | Nothing.    | Save an object.
 `set()`       | None.        | Nothing.    | A method.
-`update()`    | None.        | Nothing.    | A method.
 `get()`       | None.        | Nothing.    | A method.
 `remove()`    | None.        | Nothing.    | A method.
 `getAll()`    | None.        | Nothing.    | A method.

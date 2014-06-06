@@ -162,50 +162,6 @@
     },
 
     /**
-     * Update an Object at the given id.
-     * @param {number|string}        id
-     * @param {string|number|object} object
-     * @return {promise}             Promise for the id of the 
-     *                               created object
-     */
-    update: function (key, object) {
-      var self = this;
-      return self._awaitReady(self._update, arguments);
-    },
-    _update: function (key, object) {
-      var self = this;
-      var updateError = new Error("Update not possible. No item with the given key exists.");
-      if (self.key) {
-        // indexeddb will throw a constraint error for the 
-        // duplicate key instead of updating the object
-        // so we check if the item exists
-        return self._getIdForKey(key)
-          .then(function(id){
-            // save the new item if an item at the given id exists
-            // else throw an error because there is no item to update
-            if (id) {
-              return self._put(object, id);
-            } else {
-              return Promise.reject(updateError);
-            }
-          })
-          // resolve with key instead of id
-          .then(function(id){
-            return key;
-          });
-      } else {
-        // if the key is an id we can just insert it.
-        self._get(key).then(function(item){
-          if (item) {
-            return self._put(object, key);
-          } else {
-            return Promise.reject(updateError);
-          }
-        });
-      }
-    },
-
-    /**
      * Get the object saved at a given id/key.
      * @param  {number|string} id
      * @return {promise}       Promise for the object
@@ -383,9 +339,6 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
   };
   StoragePrototype.set = function (key, object) {
     return this.storage.set(key, object);
-  };
-  StoragePrototype.update = function (key, object) {
-    return this.storage.update(key, object);
   };
   StoragePrototype.get = function (key) {
     return this.storage.get(key);
