@@ -4,7 +4,7 @@
   "description": "Web component indexdb storage",
   "main": "element.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/karma/bin/karma start karma.conf.js --single-run"
   },
   "repository": {
     "type": "git",

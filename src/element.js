@@ -58,7 +58,6 @@
         if (key) {
           store.createIndex(self.key, self.key, {unique: true});
         }
-        resolve(self);
       };
       req.onerror = reject;
     });
