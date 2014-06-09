@@ -182,29 +182,6 @@
               })
             ).to.eventually.deep.equal(updatedItem);
         });
-<<<<<<< HEAD
-=======
-        it("should set(key,obj) an item, update(key, obj) it item and get(key) it", function(){
-          var newItem = generateSampleItems(1)[0];
-          var updatedItem = newItem;
-          updatedItem.v = randomContent();
-          return expect(
-            kvk.set(newItem.k, newItem)
-              .then(function(k){
-                expect(k).to.equal(newItem.k);
-                return kvk.get(newItem.k);
-              })
-              .then(function(item){
-                expect(item).to.deep.equal(newItem);
-                return kvk.update(newItem.k,updatedItem);
-              })
-              .then(function(k){
-                expect(k).to.equal(newItem.k);
-                return kvk.get(newItem.k);
-              })
-            ).to.eventually.deep.equal(updatedItem);
-        });
->>>>>>> potch/travis
         it("should throw a ConstraintError when you try to save() an existing item", function(){
           var newItem = generateSampleItems(1)[0];
           return expect(
