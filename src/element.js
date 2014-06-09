@@ -6,7 +6,7 @@
                   window.mozIndexedDB ||
                   window.webkitIndexedDB ||
                   window.msIndexedDB;
-                  
+
   var IDBTransaction = window.IDBTransaction ||
                        window.webkitIDBTransaction ||
                        window.mozIDBTransaction ||
@@ -22,7 +22,7 @@
         resolve(req.result);
       };
       req.onerror = function (e) {
-        // prevent the transaction from being aborted 
+        // prevent the transaction from being aborted
         // on a constraint error
         e.preventDefault();
         reject(req.error);
@@ -50,7 +50,7 @@
       req.onupgradeneeded = function (e) {
         self.db = req.result;
         var store = self.db.createObjectStore(self.storeName, {autoIncrement: true});
-        // create indices 
+        // create indices
         for (var i = 0; i < self.indices.length; i++) {
           store.createIndex(self.indices[i], self.indices[i]);
         }
@@ -58,7 +58,6 @@
         if (key) {
           store.createIndex(self.key, self.key, {unique: true});
         }
-        resolve(self);
       };
       req.onerror = reject;
     });
@@ -70,14 +69,14 @@
 
   IndexedDbStore.prototype = {
 
-    // Internal function: returns the objectStore with the supplied 
+    // Internal function: returns the objectStore with the supplied
     // transaction mode. Defaults to readonly transaction.
     _getObjectStore: function(mode) {
       var self = this;
       mode = typeof mode !== 'undefined' ? mode : 'readonly';
       var t = self.db.transaction(self.storeName, mode);
       return t.objectStore(self.storeName);
-    }, 
+    },
 
     // Internal function to defer the execution of a supplied function
     // until the database is ready.
@@ -110,7 +109,7 @@
     /**
      * Save an object into the database
      * @param  {object}    object   the object to be saved
-     * @return {promise}   Promise for the id/key to which 
+     * @return {promise}   Promise for the id/key to which
      *                     it was saved
      */
     save: function (object) {
@@ -134,7 +133,7 @@
      * Update or insert an Object at the given id/key.
      * @param {number}               id
      * @param {string|number|object} object
-     * @return {promise}             Promise for the id/key of 
+     * @return {promise}             Promise for the id/key of
      *                               the created object
      */
     set: function (key, object) {
@@ -144,7 +143,7 @@
     _set: function (key, object) {
       var self = this;
       if (self.key) {
-        // indexeddb will throw a constraint error for the 
+        // indexeddb will throw a constraint error for the
         // duplicate key instead of updating the object
         // so we first check if the item exists
         return self._getIdForKey(key)
@@ -206,7 +205,7 @@
 
     /**
      * Returns all databse entries.
-     * @param  {options} 
+     * @param  {options}
      *   {string}  orderby    The key by which the results will be ordered.
      *   {boolean} reverse    Reverse the order of the results.
      * @return {promise}      Promise for the objects
@@ -223,7 +222,7 @@
 
     /**
      * Returns multiple database entries.
-     * @param  {options} 
+     * @param  {options}
      *   {any}     stt        The first id of the results.
      *   {any}     end        The last id of the results.
      *   {number}  count      The number of results.
@@ -328,6 +327,9 @@
 var StoragePrototype = Object.create(HTMLElement.prototype);
 
   StoragePrototype.createdCallback = function () {
+  };
+
+  StoragePrototype.attachedCallback = function () {
     this.name = this.getAttribute('name') || 'storage';
     this.key = this.getAttribute('key');
     this.indices = this.getAttribute('index').split(" ");
@@ -359,7 +361,7 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
     return this.storage.clear();
   };
 
-  document.registerElement('x-storage-indexeddb', {
+  window.XStorageIndexedDB = document.registerElement('x-storage-indexeddb', {
     prototype: StoragePrototype
   });
 
