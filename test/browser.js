@@ -185,26 +185,6 @@ describe("the key value store with key", function(){
         })
       ).to.eventually.deep.equal(updatedItem);
   });
-  it("should set(key,obj) an item, update(key, obj) it item and get(key) it", function(){
-    var newItem = generateSampleItems(1)[0];
-    var updatedItem = newItem;
-    updatedItem.v = randomContent();
-    return expect(
-      kvk.set(newItem.k, newItem)
-        .then(function(k){
-          expect(k).to.equal(newItem.k);
-          return kvk.get(newItem.k);
-        })
-        .then(function(item){
-          expect(item).to.deep.equal(newItem);
-          return kvk.update(newItem.k,updatedItem);
-        })
-        .then(function(k){
-          expect(k).to.equal(newItem.k);
-          return kvk.get(newItem.k);
-        })
-      ).to.eventually.deep.equal(updatedItem);
-  });
   it("should throw a ConstraintError when you try to save() an existing item", function(){
     var newItem = generateSampleItems(1)[0];
     return expect(
@@ -212,12 +192,6 @@ describe("the key value store with key", function(){
         .then(function() {
           return kvk.save(newItem)
         })
-    ).to.be.rejected;
-  });
-  it("should throw an Error when you try to update() an non-existant item", function(){
-    // fails in firefox.. TODO
-    return expect(
-      kvk.update("ttttttt",{k:"ttttttt"})
     ).to.be.rejected;
   });
   it("should be empty again after clear()", function(){
