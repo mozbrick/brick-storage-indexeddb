@@ -29,7 +29,7 @@
       var kvk = document.querySelector('#store-k');
 
       var expect = chai.expect;
-      
+
       var timeout = 5000;
       var n = 200;
       var k = 20;
@@ -156,7 +156,7 @@
           var newItem = generateSampleItems(1)[0];
           return expect(
             kvk.set(newItem.k, newItem)
-              .then(function(k){ 
+              .then(function(k){
                 expect(k).to.equal(newItem.k);
                 return kvk.get(newItem.k);
               })
@@ -168,7 +168,7 @@
           updatedItem.v = randomContent();
           return expect(
             kvk.set(newItem.k, newItem)
-              .then(function(k){ 
+              .then(function(k){
                 expect(k).to.equal(newItem.k);
                 return kvk.get(newItem.k);
               })
@@ -188,7 +188,7 @@
           updatedItem.v = randomContent();
           return expect(
             kvk.set(newItem.k, newItem)
-              .then(function(k){ 
+              .then(function(k){
                 expect(k).to.equal(newItem.k);
                 return kvk.get(newItem.k);
               })
@@ -258,7 +258,7 @@
               for (var i = 0; i < all.length; i++) {
                 expect(all[i]).to.deep.equal(arr[i]);
               };
-              done(); 
+              done();
             })
         });
         it("should getMany({count: 5}) 5 items orderedBy id", function(done){
@@ -269,7 +269,7 @@
               for (var i = 0; i < all.length; i++) {
                 expect(all[i]).to.deep.equal(arr[i]);
               }
-              done();              
+              done();
             });
         });
         it("should getMany({count: 5, offset: 25}) 5 items ordered by id order starting after item 25", function(done){
@@ -280,7 +280,7 @@
               for (var i = 0; i < all.length; i++) {
                 expect(all[i]).to.deep.equal(arr[i+25]);
               }
-              done();              
+              done();
             });
         });
         it("should getMany({count: 5, offset: 25, orderby: v}) 5 items ordered by v order starting after item 25", function(done){
@@ -291,7 +291,7 @@
               for (var i = 0; i < all.length; i++) {
                 expect(all[i]).to.deep.equal(arr[i+25]);
               }
-              done();              
+              done();
             });
         });
         it("should getMany({count: 5, start: <id of item 25>}) 5 items ordered by id starting after item 25", function(done){
@@ -302,7 +302,7 @@
               for (var i = 0; i < all.length; i++) {
                 expect(all[i]).to.deep.equal(arr[i+25]);
               }
-              done();              
+              done();
             });
         });
         it("should getMany({start: <id of item 25>, end: <id of item 30>}) 5 items ordered by id starting after item 25", function(done){
@@ -313,14 +313,14 @@
               for (var i = 0; i < all.length; i++) {
                 expect(all[i]).to.deep.equal(arr[i+25]);
               }
-              done();              
+              done();
             });
         });
       })
 
       document.addEventListener('WebComponentsReady', function(){
         mocha.run();
-      }, false);        
+      }, false);
     </script>
   </body>
 </html>
