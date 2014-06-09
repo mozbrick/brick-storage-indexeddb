@@ -1,6 +1,6 @@
 # x-storage-indexeddb
 
-[![Build Status](https://travis-ci.org/dotch/x-storage-indexeddb)](https://travis-ci.org/dotch/x-storage-indexeddb)
+[![Build Status](https://travis-ci.org/dotch/x-storage-indexeddb.png)](https://travis-ci.org/dotch/x-storage-indexeddb)
 
 ## Demo
 
