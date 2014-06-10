@@ -43,13 +43,7 @@ Method        | Parameters   | Returns                                         |
 `get()`       | key          | Promise for the object                          | Retrieves the object at the key.
 `remove()`    | key          | Promise for null                                | Deletes the object at the key.
 `getAll()`    |              | Promise for all items                           | Retrieves all stored object.
-`getMany()`   | options      | Promise for multiple items                      | Returns multiple stored objects.
-              | * start      |                                                 |
-              | * end        |                                                 |
-              | * count      |                                                 |
-              | * offset     |                                                 |
-              | * orderby    |                                                 |
-              | * reverse    |                                                 |
+`getMany()`   | options      | Promise for multiple items                      | Returns multiple stored objects. <br> Options: <ul><li>`start` - The first id of the results.</li><li>`end` - The last id of the results.</li><li>`count` - The number of results.</li><li>`offset` - The offset of the first result.</li><li>`orderby` - The key by which the results will be ordered.</li><li>`reverse` - Reverse the order of the results.</li>
 `size()`      |              | Promise for the number of stored items          | Returns the number of stored objects.
 `clear()`     |              | Promise for nothing.                            | Deletes all database entries.
 
