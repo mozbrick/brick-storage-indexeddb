@@ -36,16 +36,16 @@ Attribute     | Options     | Default      | Description
 
 ## Methods
 
-Method            | Returns                                         | Description
----               | ---                                             | ---
-`save(object)`    | Promise for the key of the saved object         | Save an object.
-`set(key,object)` | Promise for the key of the saved/updated object | Store/upate an object to at a key.
-`get(key)`        | Promise for the object                          | Retrieves the object at the key.
-`remove(key)`     | Promise for null                                | Deletes the object at the key.
-`getAll(options)` | Promise for all items                           | Retrieves all stored object. <br> options: <ul><li>`orderby` - The key by which the results will be ordered.</li></ul>
-`getMany(options)`| Promise for multiple items                      | Retrieves multiple stored objects. <br> options: <ul><li>`start` - The first id of the results.</li><li>`end` - The last id of the results.</li><li>`count` - The number of results.</li><li>`offset` - The offset of the first result.</li><li>`orderby` - The key by which the results will be ordered.</li><li>`reverse` - Reverse the order of the results.</li></ul>
-`size()`          | Promise for the number of stored items          | Returns the number of stored objects.
-`clear()`         | Promise for nothing.                            | Deletes all database entries.
+Method            | Returns a promise for           | Description
+---               | ---                             | ---
+`save(object)`    | key of the saved object         | Save an object.
+`set(key,object)` | key of the saved/updated object | Store/upate an object to at a key.
+`get(key)`        | the object                      | Retrieves the object at the key.
+`remove(key)`     | null                            | Deletes the object at the key.
+`getAll(options)` | all objects                     | Retrieves all stored object. <br> options: <ul><li>`orderby` - The key by which the results will be ordered.</li></ul>
+`getMany(options)`| multiple objects                | Retrieves multiple stored objects. <br> options: <ul><li>`start` - The first id of the results.</li><li>`end` - The last id of the results.</li><li>`count` - The number of results.</li><li>`offset` - The offset of the first result.</li><li>`orderby` - The key by which the results will be ordered.</li><li>`reverse` - Reverse the order of the results.</li></ul>
+`size()`          | number of stored items          | Returns the number of stored objects.
+`clear()`         | null                            | Deletes all database entries.
 
 ## Development
 
