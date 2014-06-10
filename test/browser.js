@@ -227,6 +227,35 @@ describe("the key value store with key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
+  it("should get consecutive items in chunks of 10 by using getMany with offset and count multiple times", function(){
+    var arr = sortArray(sampleItems, keyAttribute).slice(0,30);
+    var res = [];
+    return expect(
+      kvk.getMany({
+        'offset': 0,
+        'count': 10,
+        'orderby': keyAttribute
+      }).then(function(items){
+        res.push.apply(res,items);
+        return kvk.getMany({
+          'offset': 10,
+          'count': 10,
+          'orderby': keyAttribute          
+        })
+      }).then(function(items){
+        res.push.apply(res,items);
+        return kvk.getMany({
+          'offset': 20,
+          'count': 10,
+          'orderby': keyAttribute          
+        })        
+      }).then(function(items){
+        res.push.apply(res,items);
+        return res;
+      })
+    ).to.eventually.deep.equal(arr);
+  });
+
   // it("should return an error when using getMany with start and end but without orderby", function(){
   //   var arr = sortArray(sampleItems, keyAttribute).slice(50,54);
   //   return expect(
