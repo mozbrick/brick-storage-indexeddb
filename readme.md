@@ -39,11 +39,11 @@ Attribute     | Options     | Default      | Description
 Method            | Returns a promise for           | Description
 ---               | ---                             | ---
 `save(object)`    | key of the saved object         | Save an object.
-`set(key,object)` | key of the saved/updated object | Store/upate an object to at a key.
+`set(key, object)`| key of the saved/updated object | Store/upate an object to at a key.
 `get(key)`        | the object                      | Retrieves the object at the key.
 `remove(key)`     | null                            | Deletes the object at the key.
-`getAll(options)` | all objects                     | Retrieves all stored object. <br> options: <ul><li>`orderby` - The key by which the results will be ordered.</li></ul>
-`getMany(options)`| multiple objects                | Retrieves multiple stored objects. <br> options: <ul><li>`start` - The first id of the results.</li><li>`end` - The last id of the results.</li><li>`count` - The number of results.</li><li>`offset` - The offset of the first result.</li><li>`orderby` - The key by which the results will be ordered.</li><li>`reverse` - Reverse the order of the results.</li></ul>
+`getAll(options)` | all objects                     | Retrieves all stored object. <ul><li>`options.orderby` - The key by which the results will be ordered.</li></ul>
+`getMany(options)`| multiple objects                | Retrieves multiple stored objects. <ul><li>`options.start` - The first id of the results.</li><li>`options.end` - The last id of the results.</li><li>`options.count` - The number of results.</li><li>`options.offset` - The offset of the first result.</li><li>`options.orderby` - The key by which the results will be ordered.</li><li>`options.reverse` - Reverse the order of the results.</li></ul>
 `size()`          | number of stored items          | Returns the number of stored objects.
 `clear()`         | null                            | Deletes all database entries.
 
