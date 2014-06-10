@@ -160,23 +160,6 @@
     },
 
     /**
-     * Returns all databse entries.
-     * @param  {options}
-     *   {string}  orderby    The key by which the results will be ordered.
-     *   {boolean} reverse    Reverse the order of the results.
-     * @return {promise}      Promise for the objects
-     */
-    getAll: function(options) {
-      var self = this;
-      return self._awaitReady(self._getMany, arguments);
-    },
-    _getAll: function(options) {
-      var self = this;
-      // Get all entries by calling _getRange
-      return self._getMany(options);
-    },
-
-    /**
      * Returns multiple database entries.
      * @param  {options}
      *   {any}     start      The first id of the results.
