@@ -43,7 +43,7 @@ Method            | Returns a promise for  | Description
 `get(key)`        | object                 | Retrieves the object with the key.
 `remove(key)`     | undefined              | Deletes the object with the key.
 `getAll(options)` | all objects.           | Retrieves all stored object. <ul><li>`options.orderby` - The key/index by which the results will be ordered.</li></ul>
-`getMany(options)`| multiple objects       | Retrieves multiple stored objects. <ul><li>`options.start` - The first id of the results.</li><li>`options.end` - The last id of the results.</li><li>`options.count` - The number of results.</li><li>`options.offset` - The offset of the first result when set to true.</li><li>`options.orderby` - The key/index by which the results will be ordered.</li><li>`options.reverse` - Reverse the order of the results.</li></ul>
+`getMany(options)`| multiple objects       | Retrieves multiple stored objects.<ul><li>`options.start` - The first id of the results.</li><li>`options.end` - The last id of the results.</li><li>`options.count` - The number of results.</li><li>`options.offset` - The offset of the first result when set to true.</li><li>`options.orderby` - The key/index by which the results will be ordered.</li><li>`options.reverse` - Reverse the order of the results.</li></ul>
 `size()`          | number of stored items | Returns the number of stored objects.
 `clear()`         | undefined              | Deletes all database entries.
 
