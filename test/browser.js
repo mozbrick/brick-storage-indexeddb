@@ -47,7 +47,7 @@ function generateSampleItems(n) {
   var collection = {};
   var items = [];
   while(Object.keys(collection).length < n) {
-    key = randomContent();
+    var key = randomContent();
     collection[key] = randomContent();
   }
   for (var itemKey in collection) {
@@ -59,7 +59,7 @@ function generateSampleItems(n) {
   items = shuffleArray(items);
   for (var i = 0; i < items.length; i++) {
     items[i].i = i;
-  };
+  }
   return items;
 }
 
@@ -104,7 +104,7 @@ function populateDbAndGetIds(database){
       }, Promise.resolve());
     })
     .then(function(lastId){
-      ids.push(lastId)
+      ids.push(lastId);
       return Promise.resolve(ids);
     });
 }
@@ -118,8 +118,8 @@ describe("the key value store with key", function(){
     populateDb(kvk)
       .then(function(){
         done();
-      })
-  })
+      });
+  });
 
   it("should return size() == " + n + "after saving 200 items with insert()", function(){
     var promise = kvk.size();
@@ -240,15 +240,15 @@ describe("the key value store with key", function(){
         return kvk.getMany({
           'offset': 10,
           'count': 10,
-          'orderby': keyAttribute          
-        })
+          'orderby': keyAttribute
+        });
       }).then(function(items){
         res.push.apply(res,items);
         return kvk.getMany({
           'offset': 20,
           'count': 10,
-          'orderby': keyAttribute          
-        })        
+          'orderby': keyAttribute
+        });
       }).then(function(items){
         res.push.apply(res,items);
         return res;
@@ -303,7 +303,7 @@ describe("the key value store with key", function(){
     return expect(
       kvk.insert(newItem)
         .then(function() {
-          return kvk.insert(newItem)
+          return kvk.insert(newItem);
         })
     ).to.be.rejected;
   });
@@ -314,7 +314,7 @@ describe("the key value store with key", function(){
         .then(function(){ return kvk.size(); })
     ).to.eventually.equal(0);
   });
-})
+});
 
 describe("the key value store without key", function(){
   this.timeout(timeout);
@@ -326,17 +326,17 @@ describe("the key value store without key", function(){
       .then(function(ids){
         for (var i = 0; i < ids.length; i++) {
           sampleItems[i].id=ids[i];
-        };
+        }
         done();
-      })
-  })
+      });
+  });
 
   it("should getAll() all items in no particular order", function(){
     var arr = sortArray(sampleItems, keyAttribute);
     return expect(
       kv.getAll()
         .then(function(all){
-          return sortArray(all, keyAttribute)
+          return sortArray(all, keyAttribute);
         })
     ).to.eventually.deep.equal(arr);
   });
@@ -393,4 +393,4 @@ describe("the key value store without key", function(){
         })
     ).to.eventually.deep.equal(updatedItem);
   });
-})
+});

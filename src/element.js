@@ -204,7 +204,7 @@
       var end = options.end;
       var count = options.count || undefined;
       var offset = options.offset || 0;
-      var advance = offset == 0 ? false : true;
+      var advance = offset === 0 ? false : true;
       var direction = options.reverse ? 'prev' : 'next';
       var orderby = options.orderby;
 
@@ -235,7 +235,7 @@
           if (!cursor || (counter !== undefined && counter >= count)) {
             resolve(allItems);
           } else {
-            // if we no offset is specified or we skipped ahead 
+            // if we no offset is specified or we skipped ahead
             // already, add the item to the results.
             // else advance the cursor by the offset.
             if (!advance) {
@@ -250,7 +250,7 @@
         };
       });
     },
-    
+
     /**
      * Returns the number of database entries.
      * @return {promise} Promise for the size.
