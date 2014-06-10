@@ -223,7 +223,7 @@
     /**
      * Returns multiple database entries.
      * @param  {options}
-     *   {any}     stt        The first id of the results.
+     *   {any}     start      The first id of the results.
      *   {any}     end        The last id of the results.
      *   {number}  count      The number of results.
      *   {number}  offset     The offset of the first result.
@@ -251,6 +251,10 @@
       var offset = options.offset || undefined;
       var direction = options.reverse ? 'prev' : 'next';
       var orderby = options.orderby;
+
+      if (!orderby && (end || start)) {
+        return  Promise.reject(new Error("Using start or end without orderby is not possible."));
+      };
       // set bound based on options
       var bound;
       if (start && end) {

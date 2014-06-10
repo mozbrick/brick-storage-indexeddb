@@ -29,26 +29,27 @@
 Attribute     | Options     | Default      | Description
 ---           | ---         | ---          | ---
 `name`        | *string*    | `storage`    | The database name.
-`index`       | *string*    | `storage`    | The database name.
+`key`         | *string*    | `id`         | The name of the unique primary key to use for get, set and remove operations. Optional, if not provided, auto-generated ids will be used.
+`index`       | *string*    |              | One or multiple indices which can be used to order and  the results of queries which return multiple items.
 
 ## Methods
 
-Method        | Parameters   | Returns     | Description
----           | ---          | ---         | ---
-`save()`      | None.        | Nothing.    | Save an object.
-`set()`       | None.        | Nothing.    | A method.
-`get()`       | None.        | Nothing.    | A method.
-`remove()`    | None.        | Nothing.    | A method.
-`getAll()`    | None.        | Nothing.    | A method.
-`getMany()`   | None.        | Nothing.    | A method.
-`size()`      | None.        | Nothing.    | A method.
-`clear()`     | None.        | Nothing.    | A method.
-
-## Events
-
-Event         | Description
----           | ---
-`onsomething` | Triggers when something happens.
+Method        | Parameters   | Returns                                         | Description
+---           | ---          | ---                                             | ---
+`save()`      | object       | Promise for the key of the saved object         | Save an object.
+`set()`       | key, object  | Promise for the key of the saved/updated object | Store/upate an object to at a key.
+`get()`       | key          | Promise for the object                          | Retrieves the object at the key.
+`remove()`    | key          | Promise for null                                | Deletes the object at the key.
+`getAll()`    |              | Promise for all items                           | Retrieves all stored object.
+`getMany()`   | options      | Promise for multiple items                      | Returns multiple stored objects.
+              | * start      |                                                 |
+              | * end        |                                                 |
+              | * count      |                                                 |
+              | * offset     |                                                 |
+              | * orderby    |                                                 |
+              | * reverse    |                                                 |
+`size()`      |              | Promise for the number of stored items          | Returns the number of stored objects.
+`clear()`     |              | Promise for nothing.                            | Deletes all database entries.
 
 ## Development
 
@@ -57,7 +58,7 @@ In order to run it locally you'll need to fetch some dependencies and a basic se
 * Install [Bower](http://bower.io/) & [Gulp](http://gulpjs.com/):
 
     ```sh
-    $ [sudo] npm install -g bower gulp
+    $ npm install -g bower gulp
     ```
 
 * Install local dependencies:
@@ -66,13 +67,13 @@ In order to run it locally you'll need to fetch some dependencies and a basic se
     $ bower install && npm install
     ```
 
-* To test your project, start the development server and open `http://localhost:3001`.
+* To test the project, start the development server and open `http://localhost:3001`.
 
     ```sh
     $ gulp server
     ```
 
-* To build your css and lint your scripts.
+* To build the css and lint the scripts.
 
     ```sh
     $ gulp build
