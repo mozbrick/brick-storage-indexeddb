@@ -49,14 +49,10 @@
       };
       req.onupgradeneeded = function (e) {
         self.db = req.result;
-        var store = self.db.createObjectStore(self.storeName, {autoIncrement: true});
+        var store = self.db.createObjectStore(self.storeName, { keyPath: self.key });
         // create indices
         for (var i = 0; i < self.indices.length; i++) {
           store.createIndex(self.indices[i], self.indices[i]);
-        }
-        // if provided create a unique index with the key
-        if (key) {
-          store.createIndex(self.key, self.key, {unique: true});
         }
       };
       req.onerror = reject;
@@ -74,8 +70,8 @@
     _getObjectStore: function(mode) {
       var self = this;
       mode = typeof mode !== 'undefined' ? mode : 'readonly';
-      var t = self.db.transaction(self.storeName, mode);
-      return t.objectStore(self.storeName);
+      return self.db.transaction(self.storeName, mode)
+                    .objectStore(self.storeName);
     },
 
     // Internal function to defer the execution of a supplied function
@@ -91,42 +87,20 @@
       }
     },
 
-    // Internal get the id for a given key
-    _getIdForKey: function (key) {
+    /**
+    * Save an object into the database
+    * @param {object} object the object to be saved
+    * @return {promise} Promise for the id/key to which
+    * it was saved
+    */
+    insert: function (object) {
       var self = this;
-      var store = self._getObjectStore();
-      var index = store.index(self.key);
-      return wrap(index.getKey(key));
+      return self._awaitReady(self._insert, arguments);
     },
-
-    // Internal to put object into the db
-    _put: function (object, key) {
+    _insert: function (object) {
       var self = this;
       var store = self._getObjectStore('readwrite');
-      return wrap(store.put(object, key));
-    },
-
-    /**
-     * Save an object into the database
-     * @param  {object}    object   the object to be saved
-     * @return {promise}   Promise for the id/key to which
-     *                     it was saved
-     */
-    save: function (object) {
-      var self = this;
-      return self._awaitReady(self._save, arguments);
-    },
-    _save: function (object) {
-      var self = this;
-      if (self.key) {
-        return self._put(object)
-          .then(function (id){
-            // return key instead of id
-            return object[self.key];
-          });
-      } else {
-        return self._put(object);
-      }
+      return wrap(store.add(object));
     },
 
     /**
@@ -136,28 +110,14 @@
      * @return {promise}             Promise for the id/key of
      *                               the created object
      */
-    set: function (key, object) {
+    set: function (object) {
       var self = this;
       return self._awaitReady(self._set, arguments);
     },
-    _set: function (key, object) {
+    _set: function (object) {
       var self = this;
-      if (self.key) {
-        // indexeddb will throw a constraint error for the
-        // duplicate key instead of updating the object
-        // so we first check if the item exists
-        return self._getIdForKey(key)
-          .then(function(id){
-            return self._put(object, id);
-          })
-          .then(function(id){
-            // resolve with the key after the item has been saved
-            return key;
-          });
-      } else {
-        // if the key is an id we can just insert.
-        return self._put(object, key);
-      }
+      var store = self._getObjectStore('readwrite');
+      return wrap(store.put(object));
     },
 
     /**
@@ -172,12 +132,7 @@
     _get: function (key) {
       var self = this;
       var store = self._getObjectStore();
-      if (self.key) {
-        var index = store.index(self.key);
-        return wrap(index.get(key));
-      } else {
-        return wrap(store.get(key));
-      }
+      return wrap(store.get(key));
     },
 
     /**
@@ -191,16 +146,8 @@
     },
     _remove: function (key) {
       var self = this;
-      if (self.key) {
-        // need to get the primary key to delete something
-        return self._getIdForKey(key).then(function(id){
-          var store = self._getObjectStore('readwrite');
-          return wrap(store.delete(id));
-        });
-      } else {
-        var store = self._getObjectStore('readwrite');
-        return wrap(store.delete(key));
-      }
+      var store = self._getObjectStore('readwrite');
+      return wrap(store.delete(key));
     },
 
     /**
@@ -269,12 +216,11 @@
       var allItems = [];
       return new Promise(function(resolve,reject){
         var cursorRequest;
-        if (orderby || self.key) {
-          var ordering = orderby || self.key;
-          var index = store.index(ordering);
-          cursorRequest = index.openCursor(bound, direction);
-        } else {
+        if (!orderby || orderby === self.key) {
           cursorRequest = store.openCursor(bound, direction);
+        } else {
+          var index = store.index(orderby);
+          cursorRequest = index.openCursor(bound, direction);
         }
         cursorRequest.onsuccess = function(e){
           var cursor = e.target.result;
@@ -340,8 +286,8 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
     this.storage = new IndexedDbStore(this.name, this.key, this.indices);
   };
 
-  StoragePrototype.save = function (object) {
-    return this.storage.save(object);
+  StoragePrototype.insert = function (object) {
+    return this.storage.insert(object);
   };
   StoragePrototype.set = function (key, object) {
     return this.storage.set(key, object);
