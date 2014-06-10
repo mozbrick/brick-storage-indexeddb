@@ -288,9 +288,6 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
   StoragePrototype.remove = function (key) {
     return this.storage.remove(key);
   };
-  StoragePrototype.getAll = function (options) {
-    return this.storage.getAll(options);
-  };
   StoragePrototype.getMany = function (options) {
     return this.storage.getMany(options);
   };

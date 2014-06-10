@@ -128,36 +128,36 @@ describe("the key value store with key", function(){
     ).to.eventually.equal(sampleItems.length);
   });
 
-  it("should getAll() all items orderedBy the key attribute", function(){
+  it("should getMany() all items orderedBy the key attribute", function(){
     var arr = sortArray(sampleItems, keyAttribute);
     return expect(
-      kvk.getAll()
+      kvk.getMany()
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getAll({'reverse': true}) all items ordered by the key attribute reversed", function(){
+  it("should getMany({'reverse': true}) all items ordered by the key attribute reversed", function(){
     var arr = sortArray(sampleItems, keyAttribute);
     arr.reverse();
     return expect(
-      kvk.getAll({
+      kvk.getMany({
         'reverse': true
       })
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getAll({'orderby': indexAttribute}) all items ordered by an index attribute", function(){
+  it("should getMany({'orderby': indexAttribute}) all items ordered by an index attribute", function(){
     var arr = sortArray(sampleItems, indexAttribute);
     return expect(
-      kvk.getAll({
+      kvk.getMany({
         'orderby': indexAttribute
       })
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getAll({'orderby': indexAttribute, 'reverse': true}) all items ordered by an index attribute reversed", function(){
+  it("should getMany({'orderby': indexAttribute, 'reverse': true}) all items ordered by an index attribute reversed", function(){
     var arr = sortArray(sampleItems, indexAttribute).reverse();
     return expect(
-      kvk.getAll({
+      kvk.getMany({
         'orderby': indexAttribute,
         'reverse': true
       })
@@ -331,10 +331,10 @@ describe("the key value store without key", function(){
       });
   });
 
-  it("should getAll() all items in no particular order", function(){
+  it("should getMany() all items in no particular order", function(){
     var arr = sortArray(sampleItems, keyAttribute);
     return expect(
-      kv.getAll()
+      kv.getMany()
         .then(function(all){
           return sortArray(all, keyAttribute);
         })
