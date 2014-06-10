@@ -13,15 +13,20 @@ var indexAttribute = "v";
 var timeout = 5000;
 var n = 200;
 var sampleItems = [];
+var sampleItemsWithId = [];
 
 window.addEventListener('WebComponentsReady', function(e) {
   document.head.innerHTML += '<link rel="import" id="el" href="/base/src/element.html">';
   document.querySelector('#el').addEventListener('load', function() {
+    window.kv = document.createElement('x-storage-indexeddb');
+    kv.setAttribute('name', 'x-store-no-key-1');
+    kv.setAttribute('index', 'v i');
     window.kvk = document.createElement('x-storage-indexeddb');
     kvk.setAttribute('name', 'x-store-key-1');
     kvk.setAttribute('key', keyAttribute);
     kvk.setAttribute('index', 'v i');
     document.body.appendChild(kvk);
+    document.body.appendChild(kv);
     ready();
   });
 });
@@ -86,6 +91,23 @@ function populateDb(database){
     });
 }
 
+function populateDbAndGetIds(database){
+  var array = sampleItems.slice(0);
+  var ids = [];
+  return database.clear()
+    .then(function() {
+      return array.reduce(function (prev, cur, i) {
+        return prev.then(function(id) {
+          if (id) { ids.push(id); }
+          return database.insert(cur);
+        });
+      }, Promise.resolve());
+    })
+    .then(function(lastId){
+      ids.push(lastId)
+      return Promise.resolve(ids);
+    });
+}
 
 describe("the key value store with key", function(){
   this.timeout(timeout);
@@ -262,5 +284,84 @@ describe("the key value store with key", function(){
       kvk.clear()
         .then(function(){ return kvk.size(); })
     ).to.eventually.equal(0);
+  });
+})
+
+describe("the key value store without key", function(){
+  this.timeout(timeout);
+
+  before(function(done){
+    sampleItems = generateSampleItems(n);
+    singleItem = generateSampleItems(1)[0];
+    populateDbAndGetIds(kv)
+      .then(function(ids){
+        for (var i = 0; i < ids.length; i++) {
+          sampleItems[i].id=ids[i];
+        };
+        done();
+      })
+  })
+
+  it("should getAll() all items in no particular order", function(){
+    var arr = sortArray(sampleItems, keyAttribute);
+    return expect(
+      kv.getAll()
+        .then(function(all){
+          return sortArray(all, keyAttribute)
+        })
+    ).to.eventually.deep.equal(arr);
+  });
+
+  it("should getMany({start: <indexAttribute of item 50>, end: <indexAttribute of item 54>, 'orderby': indexAttribute}) 5 items ordered by an indexAttribute starting after item 50", function(){
+    var arr = sortArray(sampleItems, indexAttribute).slice(50,54);
+    return expect(
+      kv.getMany({
+        'start': arr[0][indexAttribute],
+        'end': arr[3][indexAttribute],
+        'orderby': indexAttribute
+      })
+    ).to.eventually.deep.equal(arr);
+  });
+
+  it("should getMany({count: 5, offset: 25, orderby: indexAttribute}) 5 items ordered by an index attribute starting after item 25", function(){
+    var arr = sortArray(sampleItems, indexAttribute).slice(25,25+5);
+    return expect(
+      kv.getMany({
+        'count': 5,
+        'offset': 25,
+        'orderby': indexAttribute
+      })
+    ).to.eventually.deep.equal(arr);
+  });
+
+  it("should getMany({count: 5, start: <key of item 50>, orderby keyAttribute}) 5 items ordered by an index attribute starting after item 50", function(){
+    var arr = sortArray(sampleItems,indexAttribute).slice(50,50+5);
+    return expect(
+      kv.getMany({
+        'count': 5,
+        'start': arr[0][indexAttribute],
+        'orderby': indexAttribute
+      })
+    ).to.eventually.deep.equal(arr);
+  });
+
+  it("should save(obj) an item, update it with set(key, obj) and get(key) it", function(){
+    var newItem = generateSampleItems(1)[0];
+    var updatedItem = newItem;
+    updatedItem[indexAttribute] = randomContent();
+    return expect(
+      kv.insert(newItem)
+        .then(function(id){
+          updatedItem.id = id;
+          return kv.get(id);
+        })
+        .then(function(item){
+          expect(item).to.deep.equal(newItem);
+          return kv.set(updatedItem);
+        })
+        .then(function(id){
+          return kv.get(id);
+        })
+    ).to.eventually.deep.equal(updatedItem);
   });
 })

@@ -36,7 +36,13 @@
     self._ready = false;
     self.storeName = storeName;
     self.indices = indices;
-    self.key = key;
+    if (key) {
+      self.key = key;
+      self.autoIncrement = false;
+    } else {
+      self.key = "id";
+      self.autoIncrement = true;
+    }
 
     self.ready = new Promise(function (resolve, reject) {
       if (!indexedDB) {
@@ -49,7 +55,7 @@
       };
       req.onupgradeneeded = function (e) {
         self.db = req.result;
-        var store = self.db.createObjectStore(self.storeName, { keyPath: self.key });
+        var store = self.db.createObjectStore(self.storeName, { keyPath: self.key, autoIncrement: self.autoIncrement });
         // create indices
         for (var i = 0; i < self.indices.length; i++) {
           store.createIndex(self.indices[i], self.indices[i]);
@@ -281,7 +287,7 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
 
   StoragePrototype.attachedCallback = function () {
     this.name = this.getAttribute('name') || 'storage';
-    this.key = this.getAttribute('key');
+    this.key = this.getAttribute('key') || null;
     this.indices = this.getAttribute('index').split(" ");
     this.storage = new IndexedDbStore(this.name, this.key, this.indices);
   };

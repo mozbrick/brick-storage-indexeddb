@@ -14,9 +14,12 @@
   <body>
 
     <!-- Using Custom Element -->
-    <x-storage-indexeddb name="1234" key="a" index="b c"></x-storage-indexeddb>
+    <x-storage-indexeddb id="kvk" name="1234" key="a" index="b c"></x-storage-indexeddb>
+    <x-storage-indexeddb id="kv" name="abcd" index="b c"></x-storage-indexeddb>
+
     <script>
-      var kv = document.querySelector('x-storage-indexeddb');
+      var kvk = document.querySelector('#kvk');
+      var kv = document.querySelector('#kv');
     </script>
 
   </body>
