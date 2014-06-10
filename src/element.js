@@ -49,6 +49,9 @@
         reject('No indexedDB implementation found!');
       }
       var req = indexedDB.open(self.storeName, KEYVALUE_API_VERSION);
+      req.onerror = function (e) {
+        reject(req.error);
+      };
       req.onsuccess = function (e) {
         self.db = req.result;
         resolve(self);
@@ -192,22 +195,19 @@
       return self._awaitReady(self._getMany, arguments);
     },
     _getMany: function(options) {
-      // TODO: consider using openKeyCursor in _getMany
       options = options || {};
       var self = this;
       var store = self._getObjectStore();
       var counter = 0;
-      var position = 0;
+      var advanced = false;
       var start = options.start;
       var end = options.end;
       var count = options.count || undefined;
-      var offset = options.offset || undefined;
+      var offset = options.offset || 0;
+      var advance = offset == 0 ? false : true;
       var direction = options.reverse ? 'prev' : 'next';
       var orderby = options.orderby;
 
-      if (!orderby && (end || start)) {
-        return  Promise.reject(new Error("Using start or end without orderby is not possible."));
-      };
       // set bound based on options
       var bound;
       if (start && end) {
@@ -232,24 +232,25 @@
           var cursor = e.target.result;
           // if we reached the end of the items or as many items as
           // requested with the counter, resolve with the result array.
-          if (cursor === null ||
-              cursor === undefined ||
-              (counter !== undefined && counter >= count)) {
+          if (!cursor || (counter !== undefined && counter >= count)) {
             resolve(allItems);
           } else {
-            // if we ware above the offset or no offset is specified,
-            // add the item to teh results
-            if (!offset || position >= offset) {
+            // if we no offset is specified or we skipped ahead 
+            // already, add the item to the results.
+            // else advance the cursor by the offset.
+            if (!advance) {
               allItems.push(cursor.value);
               counter++;
+              cursor.continue();
+            } else {
+              advance = false;
+              cursor.advance(offset);
             }
-            position++;
-            cursor.continue();
           }
         };
       });
     },
-
+    
     /**
      * Returns the number of database entries.
      * @return {promise} Promise for the size.

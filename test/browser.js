@@ -227,15 +227,15 @@ describe("the key value store with key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should return an error when using getMany with start and end but without orderby", function(){
-    var arr = sortArray(sampleItems, keyAttribute).slice(50,54);
-    return expect(
-      kvk.getMany({
-        'start': arr[0][keyAttribute],
-        'end': arr[3][keyAttribute],
-      })
-    ).to.eventually.be.rejected;
-  });
+  // it("should return an error when using getMany with start and end but without orderby", function(){
+  //   var arr = sortArray(sampleItems, keyAttribute).slice(50,54);
+  //   return expect(
+  //     kvk.getMany({
+  //       'start': arr[0][keyAttribute],
+  //       'end': arr[3][keyAttribute],
+  //     })
+  //   ).to.eventually.be.rejected;
+  // });
 
   it("should set(key, obj) an item and get(key) it", function(){
     var newItem = generateSampleItems(1)[0];
