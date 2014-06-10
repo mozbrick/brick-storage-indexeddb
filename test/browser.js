@@ -14,17 +14,18 @@ var timeout = 5000;
 var n = 200;
 var sampleItems = [];
 var sampleItemsWithId = [];
+var fallbackKey = "id";
 
 window.addEventListener('WebComponentsReady', function(e) {
   document.head.innerHTML += '<link rel="import" id="el" href="/base/src/element.html">';
   document.querySelector('#el').addEventListener('load', function() {
     window.kv = document.createElement('x-storage-indexeddb');
     kv.setAttribute('name', 'x-store-no-key-1');
-    kv.setAttribute('index', 'v i');
+    kv.setAttribute('index', indexAttribute);
     window.kvk = document.createElement('x-storage-indexeddb');
     kvk.setAttribute('name', 'x-store-key-1');
     kvk.setAttribute('key', keyAttribute);
-    kvk.setAttribute('index', 'v i');
+    kvk.setAttribute('index', indexAttribute);
     document.body.appendChild(kvk);
     document.body.appendChild(kv);
     ready();
@@ -121,7 +122,7 @@ describe("the key value store with key", function(){
       });
   });
 
-  it("should return size() == " + n + "after saving 200 items with insert()", function(){
+  it("should return size() == " + n + " after saving " + n + " items with insert()", function(){
     var promise = kvk.size();
     return expect(
       promise
@@ -173,29 +174,29 @@ describe("the key value store with key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({count: 5, offset: 50}) 5 items ordered by the key attribute starting after item 50", function(){
-    var arr = sortArray(sampleItems, keyAttribute).slice(50,50+5);
+  it("should getMany({count: 5, offset: 10}) 5 items ordered by the key attribute starting after item 10", function(){
+    var arr = sortArray(sampleItems, keyAttribute).slice(10,10+5);
     return expect(
       kvk.getMany({
         'count': 5,
-        'offset': 50
+        'offset': 10
       })
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({count: 5, offset: 25, orderby: indexAttribute}) 5 items ordered by an index attribute starting after item 25", function(){
-    var arr = sortArray(sampleItems, indexAttribute).slice(25,25+5);
+  it("should getMany({count: 5, offset: 10, orderby: indexAttribute}) 5 items ordered by an index attribute starting after item 10", function(){
+    var arr = sortArray(sampleItems, indexAttribute).slice(10,10+5);
     return expect(
       kvk.getMany({
         'count': 5,
-        'offset': 25,
+        'offset': 10,
         'orderby': indexAttribute
       })
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({count: 5, start: <key of item 50>, orderby keyAttribute}) 5 items ordered by the key attribute starting after item 50", function(){
-    var arr = sortArray(sampleItems, keyAttribute).slice(50,50+5);
+  it("should getMany({count: 5, start: <key of item 10>, orderby keyAttribute}) 5 items ordered by the key attribute starting after item 10", function(){
+    var arr = sortArray(sampleItems, keyAttribute).slice(10,10+5);
     return expect(
       kvk.getMany({
         'count': 5,
@@ -205,8 +206,8 @@ describe("the key value store with key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({start: <key of item 50>, end: <key of item 54>, 'orderby': keyAttribute}) 5 items ordered by key starting after item 50", function(){
-    var arr = sortArray(sampleItems, keyAttribute).slice(50,54);
+  it("should getMany({start: <key of item 10>, end: <key of item 14>, 'orderby': keyAttribute}) 5 items ordered by key starting after item 10", function(){
+    var arr = sortArray(sampleItems, keyAttribute).slice(10,14);
     return expect(
       kvk.getMany({
         'start': arr[0][keyAttribute],
@@ -216,8 +217,8 @@ describe("the key value store with key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({start: <indexAttribute of item 50>, end: <indexAttribute of item 54>, 'orderby': indexAttribute}) 5 items ordered by indexAttribute starting after item 50", function(){
-    var arr = sortArray(sampleItems, indexAttribute).slice(50,54);
+  it("should getMany({start: <indexAttribute of item 10>, end: <indexAttribute of item 14>, 'orderby': indexAttribute}) 5 items ordered by indexAttribute starting after item 10", function(){
+    var arr = sortArray(sampleItems, indexAttribute).slice(10,14);
     return expect(
       kvk.getMany({
         'start': arr[0][indexAttribute],
@@ -227,26 +228,26 @@ describe("the key value store with key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should get consecutive items in chunks of 10 by using getMany with offset and count multiple times", function(){
-    var arr = sortArray(sampleItems, keyAttribute).slice(0,30);
+  it("should get consecutive items in chunks of 5 by using getMany with offset and count multiple times", function(){
+    var arr = sortArray(sampleItems, keyAttribute).slice(0,15);
     var res = [];
     return expect(
       kvk.getMany({
         'offset': 0,
-        'count': 10,
+        'count': 5,
         'orderby': keyAttribute
       }).then(function(items){
         res.push.apply(res,items);
         return kvk.getMany({
-          'offset': 10,
-          'count': 10,
+          'offset': 5,
+          'count': 5,
           'orderby': keyAttribute
         });
       }).then(function(items){
         res.push.apply(res,items);
         return kvk.getMany({
-          'offset': 20,
-          'count': 10,
+          'offset': 10,
+          'count': 5,
           'orderby': keyAttribute
         });
       }).then(function(items){
@@ -255,16 +256,6 @@ describe("the key value store with key", function(){
       })
     ).to.eventually.deep.equal(arr);
   });
-
-  // it("should return an error when using getMany with start and end but without orderby", function(){
-  //   var arr = sortArray(sampleItems, keyAttribute).slice(50,54);
-  //   return expect(
-  //     kvk.getMany({
-  //       'start': arr[0][keyAttribute],
-  //       'end': arr[3][keyAttribute],
-  //     })
-  //   ).to.eventually.be.rejected;
-  // });
 
   it("should set(key, obj) an item and get(key) it", function(){
     var newItem = generateSampleItems(1)[0];
@@ -325,7 +316,7 @@ describe("the key value store without key", function(){
     populateDbAndGetIds(kv)
       .then(function(ids){
         for (var i = 0; i < ids.length; i++) {
-          sampleItems[i].id=ids[i];
+          sampleItems[i][fallbackKey]=ids[i];
         }
         done();
       });
@@ -341,8 +332,8 @@ describe("the key value store without key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({start: <indexAttribute of item 50>, end: <indexAttribute of item 54>, 'orderby': indexAttribute}) 5 items ordered by an indexAttribute starting after item 50", function(){
-    var arr = sortArray(sampleItems, indexAttribute).slice(50,54);
+  it("should getMany({start: <indexAttribute of item 10>, end: <indexAttribute of item 14>, 'orderby': indexAttribute}) 5 items ordered by an indexAttribute starting after item 10", function(){
+    var arr = sortArray(sampleItems, indexAttribute).slice(10,14);
     return expect(
       kv.getMany({
         'start': arr[0][indexAttribute],
@@ -352,19 +343,19 @@ describe("the key value store without key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({count: 5, offset: 25, orderby: indexAttribute}) 5 items ordered by an index attribute starting after item 25", function(){
-    var arr = sortArray(sampleItems, indexAttribute).slice(25,25+5);
+  it("should getMany({count: 5, offset: 10, orderby: indexAttribute}) 5 items ordered by an index attribute starting after item 10", function(){
+    var arr = sortArray(sampleItems, indexAttribute).slice(10,10+5);
     return expect(
       kv.getMany({
         'count': 5,
-        'offset': 25,
+        'offset': 10,
         'orderby': indexAttribute
       })
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should getMany({count: 5, start: <key of item 50>, orderby keyAttribute}) 5 items ordered by an index attribute starting after item 50", function(){
-    var arr = sortArray(sampleItems,indexAttribute).slice(50,50+5);
+  it("should getMany({count: 5, start: <key of item 10>, orderby keyAttribute}) 5 items ordered by an index attribute starting after item 10", function(){
+    var arr = sortArray(sampleItems,indexAttribute).slice(10,10+5);
     return expect(
       kv.getMany({
         'count': 5,
@@ -374,14 +365,14 @@ describe("the key value store without key", function(){
     ).to.eventually.deep.equal(arr);
   });
 
-  it("should save(obj) an item, update it with set(key, obj) and get(key) it", function(){
+  it("should insert(obj) an item, update it with set(key, obj) and get(key) it", function(){
     var newItem = generateSampleItems(1)[0];
     var updatedItem = newItem;
     updatedItem[indexAttribute] = randomContent();
     return expect(
       kv.insert(newItem)
         .then(function(id){
-          updatedItem.id = id;
+          updatedItem[fallbackKey] = id;
           return kv.get(id);
         })
         .then(function(item){
