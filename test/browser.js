@@ -262,8 +262,29 @@ describe("the key value store with key", function(){
 
   it("should set(key, obj) an item, update it with set(key, obj) and get(key) it", function(){
     var newItem = generateSampleItems(1)[0];
-    var updatedItem = newItem;
+    var updatedItem = JSON.parse(JSON.stringify(newItem));
     updatedItem[indexAttribute] = randomContent();
+    return expect(
+      kvk.set(newItem)
+        .then(function(k){
+          expect(k).to.equal(newItem[keyAttribute]);
+          return kvk.get(newItem[keyAttribute]);
+        })
+        .then(function(item){
+          expect(item).to.deep.equal(newItem);
+          return kvk.set(updatedItem);
+        })
+        .then(function(k){
+          expect(k).to.equal(newItem[keyAttribute]);
+          return kvk.get(newItem[keyAttribute]);
+        })
+    ).to.eventually.deep.equal(updatedItem);
+  });
+
+  it("should set(key, obj) an item, update it by reomiving a property with set(key, obj) and get(key) it", function(){
+    var newItem = generateSampleItems(1)[0];
+    var updatedItem = JSON.parse(JSON.stringify(newItem));
+    delete(updatedItem[indexAttribute]);
     return expect(
       kvk.set(newItem)
         .then(function(k){
