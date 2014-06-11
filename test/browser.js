@@ -384,4 +384,11 @@ describe("the key value store without key", function(){
         })
     ).to.eventually.deep.equal(updatedItem);
   });
+
+  it("should be empty again after clear()", function(){
+    return expect(
+      kv.clear()
+        .then(function(){ return kv.size(); })
+    ).to.eventually.equal(0);
+  });
 });
