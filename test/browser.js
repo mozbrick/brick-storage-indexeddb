@@ -70,10 +70,12 @@ function sortArray(array, property){
 
 function populateDb(database){
   var promises = [];
-  for (var i = 0; i < sampleItems.length; i++) {
-    promises.push(database.insert(sampleItems[i]));
-  }
-  return Promise.all(promises);
+  return database.clear().then(function(){
+    for (var i = 0; i < sampleItems.length; i++) {
+      promises.push(database.insert(sampleItems[i]));
+    }
+    return Promise.all(promises);
+  });
 }
 
 function populateDbAndGetIds(database){
