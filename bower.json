@@ -1,6 +1,6 @@
 {
   "name": "x-storage-indexeddb",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/dotch/x-storage-indexeddb",
   "authors": [
     "Matt Claypotch <thepotch@gmail.com>",
