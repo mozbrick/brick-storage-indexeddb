@@ -272,7 +272,7 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
   StoragePrototype.attachedCallback = function () {
     this.name = this.getAttribute('name') || 'storage';
     this.key = this.getAttribute('key') || null;
-    this.indices = this.getAttribute('index').split(" ");
+    this.indices = this.getAttribute('index') ? this.getAttribute('index').split(" ") : null;
     this.storage = new IndexedDbStore(this.name, this.key, this.indices);
   };
 
