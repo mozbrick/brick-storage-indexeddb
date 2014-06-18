@@ -130,6 +130,25 @@
     },
 
     /**
+    * Update or insert multiple objects into the database
+    * @param {objects} objects the object array to be saved
+    * @return {promise}
+    */
+    setMany: function (objects) {
+      var self = this;
+      return self._awaitReady(self._setMany, arguments);
+    },
+    _setMany: function (objects) {
+      var self = this;
+      var store = self._getObjectStore('readwrite');
+      var promises = [];
+      for (var i = 0; i < objects.length; i++) {
+        promises.push(store.put(objects[i]));
+      }
+      return Promise.all(promises);
+    },
+
+    /**
      * Get the object saved at a given id/key.
      * @param  {number|string} id
      * @return {promise}       Promise for the object
@@ -281,6 +300,9 @@ var StoragePrototype = Object.create(HTMLElement.prototype);
   };
   StoragePrototype.set = function (key, object) {
     return this.storage.set(key, object);
+  };
+  StoragePrototype.setMany = function (objects) {
+    return this.storage.setMany(objects);
   };
   StoragePrototype.get = function (key) {
     return this.storage.get(key);
