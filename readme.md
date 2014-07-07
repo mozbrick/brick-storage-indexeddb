@@ -1,7 +1,5 @@
 # brick-storage-indexeddb
 
-> A [Brick](https://github.com/mozbrick/brick/) custom element starter-kit.
-
 ## Demo
 
 [Check it live!](http://mozbrick.github.io/brick-storage-indexeddb)
@@ -17,7 +15,7 @@
 2. Import Custom Element:
 
     ```html
-    <link rel="import" href="src/element.html">
+    <link rel="import" href="src/brick-storage-indexeddb.html">
     ```
 
 3. Start using it:
@@ -30,27 +28,26 @@
 
 Attribute     | Options     | Default      | Description
 ---           | ---         | ---          | ---
-`foo`         | *string*    | `bar`        | An Attribute.
+`name`        | *string*    | `storage`    | The database name.
+`key`         | *string*    | `id`         | The name of the unique primary key to use for get, set and remove operations. Defaults to an auto-incrementing `id`.
+`index`       | *string*    |              | One or multiple indices which can be used to order and  the results of queries which return multiple items.
 
 ## Methods
 
-Method        | Parameters   | Returns     | Description
----           | ---          | ---         | ---
-`method()`    | None.        | Nothing.    | A method.
-
-## Events
-
-Event         | Description
----           | ---
-`onsomething` | Triggers when something happens.
+Method            | Returns a promise for  | Description
+---               | ---                    | ---
+`insert(object)`  | key of the saved object| Insert an object.
+`set(object)`     | key of the saved object| Insert/upate an object.
+`setMany(objects)`| -                      | Insert/upate multiple objects.
+`get(key)`        | object                 | Retrieves the object with the key.
+`remove(key)`     | undefined              | Deletes the object with the key.
+`getMany(options)`| array multiple objects | Retrieves multiple stored objects. If no filtering options are provided, it returns all objects.<ul><li>`options.start` - The first key of the results.</li><li>`options.end` - The last key of the results.</li><li>`options.count` - The number of results.</li><li>`options.offset` - The offset of the first result when set to true.</li><li>`options.orderby` - The key/index by which the results will be ordered. `options.start` and `options.end` use this key/index</li><li>`options.reverse` - Reverse the order of the results.</li></ul>
+`size()`          | number of stored items | Returns the number of stored objects.
+`clear()`         | undefined              | Deletes all database entries.
 
 ## Development
 
-Brick components use [Stylus](http://learnboost.github.com/stylus/) to generate their CSS.
-
-This repository comes outfitted with a set of tools to ease the development process.
-
-To get started:
+In order to run it locally you'll need to fetch some dependencies and a basic server setup.
 
 * Install [Bower](http://bower.io/) & [Gulp](http://gulpjs.com/):
 
@@ -61,16 +58,27 @@ To get started:
 * Install local dependencies:
 
     ```sh
-    $ npm install && bower install
+    $ bower install && npm install
     ```
 
-While developing your component, there is a development server that will watch your files for changes and automatically re-build your styles and re-lint your code.
+* To test the project, start the development server and open `http://localhost:3001`.
 
-To run the development server:
+    ```sh
+    $ gulp server
+    ```
 
-* Run `gulp server`
-* Navigate to `http://localhost:3001`
+* To build the css and lint the scripts.
 
-To simply build and lint your code, run `gulp build`.
+    ```sh
+    $ gulp build
+    ```
 
-You can also push your code to GitHub Pages by running `gulp deploy`.
+* To provide a live demo, send everything to `gh-pages` branch.
+
+    ```sh
+    $ gulp deploy
+    ```
+
+## License
+
+[MIT License](http://opensource.org/licenses/MIT)
