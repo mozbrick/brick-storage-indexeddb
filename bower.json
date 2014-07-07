@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "brick-common": "*",
-    "platform": "Polymer/platform"
+    "platform": "Polymer/platform",
+    "indexeddbstore": "~0.0.1"
   }
 }
