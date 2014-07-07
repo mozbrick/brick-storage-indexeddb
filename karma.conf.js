@@ -10,7 +10,7 @@ module.exports = function(config){
 
     autoWatch : true,
 
-    frameworks: ['mocha', 'chai', 'chai-as-promised'],
+    frameworks: ['mocha', 'chai'],
 
     browsers : ['Firefox'],
 
@@ -18,7 +18,6 @@ module.exports = function(config){
       'karma-firefox-launcher',
       'karma-mocha',
       'karma-chai',
-      'karma-chai-plugins',
     ],
   });
 };

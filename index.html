@@ -3,24 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
-    <title>x-storage-indexeddb</title>
+    <title>brick-storage-indexeddb</title>
 
     <!-- Importing Polyfill -->
     <script src="bower_components/platform/platform.js"></script>
 
     <!-- Importing Custom Elemenent -->
-    <link rel="import" href="src/element.html">
+    <link rel="import" href="src/brick-storage-indexeddb.html">
   </head>
   <body>
 
     <!-- Using Custom Element -->
-    <x-storage-indexeddb id="kvk" name="1234" key="a" index="b c"></x-storage-indexeddb>
-    <x-storage-indexeddb id="kv" name="abcd" index="b c"></x-storage-indexeddb>
-
-    <script>
-      var kvk = document.querySelector('#kvk');
-      var kv = document.querySelector('#kv');
-    </script>
-
+    <brick-storage-indexeddb id="kvk" name="1234" key="a" index="b c">
+    </brick-storage-indexeddb>
+    <brick-storage-indexeddb id="kv" name="abcd" index="b c">
+    </brick-storage-indexeddb>
   </body>
 </html>

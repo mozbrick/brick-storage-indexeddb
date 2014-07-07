@@ -1,13 +1,12 @@
 {
-  "name": "x-storage-indexeddb",
-  "version": "0.0.4",
-  "homepage": "https://github.com/dotch/x-storage-indexeddb",
+  "name": "brick-storage-indexeddb",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mozbrick/brick-storage-indexeddb",
   "authors": [
-    "Matt Claypotch <thepotch@gmail.com>",
-    "Christian Weiss <christian.x.weiss@gmail.com>"
+    "mozilla"
   ],
-  "description": "Web component indexdb storage",
-  "main": "src/element.html",
+  "description": "A simple promise based indexeddb wrapper.",
+  "main": "src/brick-storage-indexeddb.html",
   "keywords": [
     "brick",
     "webcomponents"
@@ -23,6 +22,5 @@
   "dependencies": {
     "brick-common": "*",
     "platform": "Polymer/platform"
-  },
-  "devDependencies": {}
+  }
 }

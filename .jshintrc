@@ -1,13 +1,18 @@
 {
+  "browser": true,
   "camelcase": true,
   "curly": true,
+  "devel": false,
+  "eqeqeq": true,
+  "esnext": true,
   "immed": true,
-  "newcap": true,
-  "undef": true,
-  "browser": true,
-  "trailing": true,
   "indent": 2,
-  "globals": {
-    "Promise": true
-  }
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "regexp": true,
+  "trailing": true,
+  "undef": true,
+  "unused": true
 }
+
