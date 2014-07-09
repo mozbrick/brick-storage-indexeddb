@@ -23,8 +23,6 @@ window.addEventListener('WebComponentsReady', function() {
 
   document.head.innerHTML += '<link rel="import" id="el" href="/base/src/brick-storage-indexeddb.html">';
   document.querySelector('#el').addEventListener('load', function() {
-    console.log("1",BrickStorageIndexeddbElement);
-    console.log("2",IndexedDbStore);
     window.kv = document.createElement('brick-storage-indexeddb');
     kv.setAttribute('name', 'store-no-key');
     kv.setAttribute('index', indexAttribute);
