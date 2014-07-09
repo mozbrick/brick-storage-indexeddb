@@ -4,7 +4,6 @@
 
   var BrickStorageIndexeddbElementPrototype = Object.create(HTMLElement.prototype);
 
-
   BrickStorageIndexeddbElementPrototype.attachedCallback = function () {
     this.name = this.getAttribute('name') || 'storage';
     this.key = this.getAttribute('key') || null;

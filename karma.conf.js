@@ -4,13 +4,14 @@ module.exports = function(config){
 
     files : [
       'bower_components/platform/platform.js',
+      'bower_components/indexeddbstore/dist/indexeddbstore.js',
       'test/browser.js',
       {pattern: 'src/*', watched: true, included: false, served: true}
     ],
 
     autoWatch : true,
 
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha', 'chai', 'chai-as-promised'],
 
     browsers : ['Firefox'],
 
@@ -18,6 +19,7 @@ module.exports = function(config){
       'karma-firefox-launcher',
       'karma-mocha',
       'karma-chai',
+      'karma-chai-plugins',
     ],
   });
 };
