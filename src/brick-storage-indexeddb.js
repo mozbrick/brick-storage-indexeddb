@@ -6,9 +6,9 @@
 
   BrickStorageIndexeddbElementPrototype.attachedCallback = function () {
     this.name = this.getAttribute('name') || 'storage';
-    this.key = this.getAttribute('key') || null;
-    this.indices = this.getAttribute('index') ? this.getAttribute('index').split(" ") : [];
-    this.storage = new IndexedDbStore(this.name, this.key, this.indices);
+    this.keyname = this.getAttribute('keyname') || null;
+    this.indexnames = this.getAttribute('indexname') ? this.getAttribute('indexname').split(" ") : [];
+    this.storage = new IndexedDbStore(this.name, this.keyname, this.indexnames);
   };
 
   BrickStorageIndexeddbElementPrototype.insert = function (object) {
