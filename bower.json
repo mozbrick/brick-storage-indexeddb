@@ -1,6 +1,6 @@
 {
   "name": "brick-storage-indexeddb",
-  "version": "0.0.0",
+  "version": "0.0.8",
   "homepage": "https://github.com/mozbrick/brick-storage-indexeddb",
   "authors": [
     "mozilla"
