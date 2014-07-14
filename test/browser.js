@@ -25,11 +25,11 @@ window.addEventListener('WebComponentsReady', function() {
   document.querySelector('#el').addEventListener('load', function() {
     window.kv = document.createElement('brick-storage-indexeddb');
     kv.setAttribute('name', 'store-no-key');
-    kv.setAttribute('index', indexAttribute);
+    kv.setAttribute('indexname', indexAttribute);
     window.kvk = document.createElement('brick-storage-indexeddb');
     kvk.setAttribute('name', 'store-key');
-    kvk.setAttribute('key', keyAttribute);
-    kvk.setAttribute('index', indexAttribute);
+    kvk.setAttribute('keyname', keyAttribute);
+    kvk.setAttribute('indexname', indexAttribute);
     document.body.appendChild(kvk);
     document.body.appendChild(kv);
     setTimeout(function() {

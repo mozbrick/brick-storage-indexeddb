@@ -29,8 +29,8 @@
 Attribute     | Options     | Default      | Description
 ---           | ---         | ---          | ---
 `name`        | *string*    | `storage`    | The database name.
-`key`         | *string*    | `id`         | The name of the unique primary key to use for get, set and remove operations. Defaults to an auto-incrementing `id`.
-`index`       | *string*    |              | One or multiple indices which can be used to order and  the results of queries which return multiple items.
+`keyname`         | *string*    | `id`         | The name of the unique primary key to use for get, set and remove operations. Defaults to an auto-incrementing `id`.
+`indexname`       | *string*    |              | One or multiple indices which can be used to order and  the results of queries which return multiple items.
 
 ## Methods
 
