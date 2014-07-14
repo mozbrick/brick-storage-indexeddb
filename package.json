@@ -1,6 +1,6 @@
 {
   "name": "brick-storage-indexeddb",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A simple promise based indexeddb wrapper.",
   "main": "brick-storage-indexeddb.html",
   "scripts": {
