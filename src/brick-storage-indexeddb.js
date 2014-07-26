@@ -15,7 +15,7 @@
     return this.storage.insert(object);
   };
   BrickStorageIndexeddbElementPrototype.set = function (object) {
-    return this.storage.set(key, object);
+    return this.storage.set(object);
   };
   BrickStorageIndexeddbElementPrototype.setMany = function (objects) {
     return this.storage.setMany(objects);
